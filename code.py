@@ -134,15 +134,12 @@ touch = touchio.TouchIn(board.A10)
 # Poll the message queue
 mqtt_client.loop()
 
-sleep_value = 60 * 5
 if touch.value:
     mqtt_client.publish(sitting_feed, 1)
     dotstar_sitting()
-    sleep_value = 60
 else:
     print("not sitting yet")
     mqtt_client.publish(sitting_feed, 0)
 
-print(f'sleeping {sleep_value} seconds')
-time_alarm = alarm.time.TimeAlarm(monotonic_time=time.monotonic() + sleep_value)
+pin_alarm = alarm.pin.PinAlarm(pin=board.A10, value=True)
 alarm.exit_and_deep_sleep_until_alarms(time_alarm)
