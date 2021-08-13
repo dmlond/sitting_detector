@@ -23,7 +23,6 @@ dotstar = adafruit_dotstar.DotStar(board.APA102_SCK, board.APA102_MOSI, 1, brigh
 # source control.
 # pylint: disable=no-name-in-module,wrong-import-order
 def dotstar_error():
-    print("Error")
     dotstar[0] = (0,0,0)
     times = 0
     while times < 10:
@@ -34,7 +33,6 @@ def dotstar_error():
         times += 1
 
 def dotstar_wifi_success():
-    print("wifi success")
     dotstar[0] = (0,0,0)
     times = 0
     while times < 10:
@@ -45,7 +43,6 @@ def dotstar_wifi_success():
         times += 1
 
 def dotstar_mqtt_success():
-    print("mqtt success")
     dotstar[0] = (0,0,0)
     times = 0
     while times < 10:
@@ -58,7 +55,6 @@ def dotstar_mqtt_success():
         times += 1
 
 def dotstar_mqtt_disconnect():
-    print("disconnected from mqtt")
     dotstar[0] = (0,0,0)
     times = 0
     while times < 5:
@@ -69,7 +65,6 @@ def dotstar_mqtt_disconnect():
         times += 1
 
 def dotstar_sitting():
-    print("sitting detected")
     dotstar[0] = (0,0,0)
     times = 0
     while times < 3:
@@ -134,12 +129,15 @@ touch = touchio.TouchIn(board.A10)
 # Poll the message queue
 mqtt_client.loop()
 
+# sleep 2 hrs unless sitting is detected
+sleep_time = 60 * 60 * 2
 if touch.value:
     mqtt_client.publish(sitting_feed, 1)
     dotstar_sitting()
+    sleep_time = 60
 else:
-    print("not sitting yet")
     mqtt_client.publish(sitting_feed, 0)
 
-pin_alarm = alarm.pin.PinAlarm(pin=board.A10, value=True)
-alarm.exit_and_deep_sleep_until_alarms(time_alarm)
+time_alarm = alarm.time.TimeAlarm(monotonic_time=time.monotonic() + sleep_time)
+touch_alarm = alarm.touch.TouchAlarm(pin=board.A6)
+alarm.exit_and_deep_sleep_until_alarms(time_alarm,touch_alarm)
