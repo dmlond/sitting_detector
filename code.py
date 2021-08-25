@@ -129,21 +129,18 @@ touch1 = touchio.TouchIn(board.A10)
 touch2 = touchio.TouchIn(board.A5)
 # yellow, left back
 touch3 = touchio.TouchIn(board.A2)
+# red, right back
+touch4 = touchio.TouchIn(board.A6)
 
 # Poll the message queue
 mqtt_client.loop()
 
-# sleep 2 hrs unless sitting is detected
-sleep_time = 60 * 60 * 2
-if touch1.value or touch2.value or touch3.value:
+if touch1.value or touch2.value or touch3.value or touch4.value:
     mqtt_client.publish(sitting_feed, 1)
     dotstar_sitting()
-    sleep_time = 60
 else:
     mqtt_client.publish(sitting_feed, 0)
-    mqtt_client.publish(sitting_feed, 0)
 
+sleep_time = 120
 time_alarm = alarm.time.TimeAlarm(monotonic_time=time.monotonic() + sleep_time)
-# red, right back
-touch_alarm = alarm.touch.TouchAlarm(pin=board.A6)
-alarm.exit_and_deep_sleep_until_alarms(time_alarm,touch_alarm)
+alarm.exit_and_deep_sleep_until_alarms(time_alarm)
