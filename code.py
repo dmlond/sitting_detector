@@ -3,6 +3,7 @@
 # required from adafruit_bundle:
 # - adafruit_requests
 # - adafruit_minimqtt
+# - adafruit_dotstar
 import time
 import ssl
 import socketpool
